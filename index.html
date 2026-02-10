@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>질문이에요</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-family:
+          "Pretendard",
+          -apple-system,
+          BlinkMacSystemFont,
+          system-ui,
+          sans-serif;
+        background: linear-gradient(
+          135deg,
+          #fff5f7 0%,
+          #ffe4ec 50%,
+          #ffd6e0 100%
+        );
+        padding: 2rem;
+        overflow: hidden;
+      }
+      h1 {
+        font-size: clamp(1.25rem, 4vw, 1.75rem);
+        color: #333;
+        text-align: center;
+        margin-bottom: 2.5rem;
+        line-height: 1.5;
+        max-width: 20ch;
+      }
+      .buttons {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        min-height: 120px;
+      }
+      .btn {
+        padding: 0.875rem 2rem;
+        font-size: 1.125rem;
+        font-weight: 600;
+        border: none;
+        border-radius: 9999px;
+        cursor: pointer;
+        transition:
+          transform 0.15s ease,
+          box-shadow 0.15s ease;
+      }
+      .btn:hover {
+        transform: scale(1.05);
+      }
+      .btn:active {
+        transform: scale(0.98);
+      }
+      .btn-yes {
+        background: linear-gradient(135deg, #ff6b9d, #ff8fab);
+        color: white;
+        box-shadow: 0 4px 14px rgba(255, 107, 157, 0.4);
+      }
+      .btn-yes:hover {
+        box-shadow: 0 6px 20px rgba(255, 107, 157, 0.5);
+      }
+      .btn-no {
+        background: linear-gradient(135deg, #a0a0a0, #c0c0c0);
+        color: white;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+        position: fixed;
+        transition:
+          left 0.2s ease-out,
+          top 0.2s ease-out;
+      }
+      .message {
+        margin-top: 2rem;
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #ff6b9d;
+        min-height: 2rem;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>승아는 하담이를 두쫀쿠보다 가장 좋아하나요?</h1>
+    <div class="buttons">
+      <button type="button" class="btn btn-yes" id="yesBtn">예</button>
+      <button type="button" class="btn btn-no" id="noBtn">아니오</button>
+    </div>
+    <p class="message" id="message" aria-live="polite"></p>
+    <script>
+      const yesBtn = document.getElementById("yesBtn");
+      const noBtn = document.getElementById("noBtn");
+      const message = document.getElementById("message");
+      const buttonsArea = document.querySelector(".buttons");
+
+      const runAwayRadius = 120;
+      const padding = 80;
+
+      function placeNoButton(x, y) {
+        const rect = noBtn.getBoundingClientRect();
+        const w = rect.width;
+        const h = rect.height;
+        const maxX = window.innerWidth - w - padding;
+        const maxY = window.innerHeight - h - padding;
+        const minX = padding;
+        const minY = padding;
+
+        let newX = x;
+        let newY = y;
+
+        newX = Math.max(minX, Math.min(maxX, newX));
+        newY = Math.max(minY, Math.min(maxY, newY));
+
+        noBtn.style.left = newX + "px";
+        noBtn.style.top = newY + "px";
+      }
+
+      function getRandomPosition() {
+        const w = noBtn.offsetWidth;
+        const h = noBtn.offsetHeight;
+        const maxX = window.innerWidth - w - padding;
+        const maxY = window.innerHeight - h - padding;
+        const minX = padding;
+        const minY = padding;
+        return {
+          x: minX + Math.random() * (maxX - minX),
+          y: minY + Math.random() * (maxY - minY),
+        };
+      }
+
+      function initNoButton() {
+        const pos = getRandomPosition();
+        noBtn.style.left = pos.x + "px";
+        noBtn.style.top = pos.y + "px";
+      }
+      initNoButton();
+
+      document.addEventListener("mousemove", (e) => {
+        const rect = noBtn.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        const dx = e.clientX - cx;
+        const dy = e.clientY - cy;
+        const dist = Math.hypot(dx, dy);
+
+        if (dist < runAwayRadius) {
+          const angle = Math.atan2(dy, dx);
+          const runDistance = runAwayRadius - dist + 60;
+          const newCenterX = cx - Math.cos(angle) * runDistance;
+          const newCenterY = cy - Math.sin(angle) * runDistance;
+          placeNoButton(
+            newCenterX - rect.width / 2,
+            newCenterY - rect.height / 2,
+          );
+        }
+      });
+
+      noBtn.addEventListener("mouseenter", () => {
+        const pos = getRandomPosition();
+        noBtn.style.left = pos.x + "px";
+        noBtn.style.top = pos.y + "px";
+      });
+
+      yesBtn.addEventListener("click", () => {
+        message.textContent = "역시! 하담이 최고죠 💕";
+      });
+
+      noBtn.addEventListener("click", () => {
+        message.textContent = "...클릭했네요. 그래도 예를 눌러주세요 😊";
+      });
+    </script>
+  </body>
+</html>
