@@ -56,8 +56,8 @@
         border-radius: 9999px;
         cursor: pointer;
         transition:
-          transform 0.15s ease,
-          box-shadow 0.15s ease;
+          transform 0.06s ease,
+          box-shadow 0.06s ease;
       }
       .btn:hover {
         transform: scale(1.05);
@@ -79,8 +79,9 @@
         box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
         position: fixed;
         transition:
-          left 0.2s ease-out,
-          top 0.2s ease-out;
+          left 0.06s ease-out,
+          top 0.06s ease-out;
+        pointer-events: none;
       }
       .message {
         margin-top: 2rem;
@@ -93,7 +94,8 @@
     </style>
   </head>
   <body>
-    <h1>승아는 하담이를 두쫀쿠보다 가장 좋아하나요?</h1>
+    <h1>승아는 하담이를 두쫀쿠보다</h1>
+    <h1>더 좋아하나요?</h1>
     <div class="buttons">
       <button type="button" class="btn btn-yes" id="yesBtn">예</button>
       <button type="button" class="btn btn-no" id="noBtn">아니오</button>
@@ -105,7 +107,7 @@
       const message = document.getElementById("message");
       const buttonsArea = document.querySelector(".buttons");
 
-      const runAwayRadius = 120;
+      const runAwayRadius = 200;
       const padding = 80;
 
       function placeNoButton(x, y) {
@@ -154,10 +156,15 @@
         const dx = e.clientX - cx;
         const dy = e.clientY - cy;
         const dist = Math.hypot(dx, dy);
+        const insideButton =
+          e.clientX >= rect.left &&
+          e.clientX <= rect.right &&
+          e.clientY >= rect.top &&
+          e.clientY <= rect.bottom;
 
-        if (dist < runAwayRadius) {
+        if (dist < runAwayRadius || insideButton) {
           const angle = Math.atan2(dy, dx);
-          const runDistance = runAwayRadius - dist + 60;
+          const runDistance = runAwayRadius - dist + 140;
           const newCenterX = cx - Math.cos(angle) * runDistance;
           const newCenterY = cy - Math.sin(angle) * runDistance;
           placeNoButton(
@@ -167,18 +174,8 @@
         }
       });
 
-      noBtn.addEventListener("mouseenter", () => {
-        const pos = getRandomPosition();
-        noBtn.style.left = pos.x + "px";
-        noBtn.style.top = pos.y + "px";
-      });
-
       yesBtn.addEventListener("click", () => {
         message.textContent = "역시! 하담이 최고죠 💕";
-      });
-
-      noBtn.addEventListener("click", () => {
-        message.textContent = "...클릭했네요. 그래도 예를 눌러주세요 😊";
       });
     </script>
   </body>
